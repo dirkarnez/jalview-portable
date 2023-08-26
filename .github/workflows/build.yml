@@ -1,0 +1,54 @@
+name: portable-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'c*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-latest
+    env:
+      targetZip: mysql-workbench-community-portable-${{ github.ref_name }}.zip
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: installer
+        shell: cmd
+        run: |
+          curl https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community-8.0.31-winx64.msi -L -J --output installer.msi
+          
+      - name: lessmsi 
+        shell: cmd
+        run: | 
+          curl https://github.com/activescott/lessmsi/releases/download/v1.10.0/lessmsi-v1.10.0.zip -L --output lessmsi.zip && 7z.exe x lessmsi.zip -o"lessmsi"
+          
+      - name: uncompress
+        shell: cmd
+        run: |
+          .\lessmsi\lessmsi.exe x "installer.msi" "installation\"
+          
+      - name: rename Program Files
+        shell: cmd
+        run: |
+          cd "installation\SourceDir\MySQL" &&^
+          rename "MySQL Workbench 8.0 CE" "MySQL_Workbench_8_0_CE"
+
+      - shell: cmd
+        run: xcopy /H /Y /C "MySQLWorkbench.exe.Portable.cmd" "installation\SourceDir\MySQL\MySQL_Workbench_8_0_CE"
+          
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "installation/SourceDir/MySQL/MySQL_Workbench_8_0_CE"
+          filename: "${{ env.targetZip }}"
+          
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "installation/SourceDir/MySQL/MySQL_Workbench_8_0_CE/${{ env.targetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
