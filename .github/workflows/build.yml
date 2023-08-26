@@ -18,7 +18,7 @@ jobs:
       - name: installer
         shell: cmd
         run: |
-          curl https://www.jalview.org/getdown/release/install4j/1.8/Jalview-2_11_2_0-windows-x64-java_8.exe -L -J --output installer.exe
+          curl https://www.jalview.org/getdown/release/install4j/1.8/Jalview-2_11_2_0-windows-x64-java_8.exe -L --output installer.exe
           
       - name: lessmsi 
         shell: pwsh
