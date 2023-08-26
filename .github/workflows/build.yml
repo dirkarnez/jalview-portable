@@ -23,8 +23,8 @@ jobs:
       - name: lessmsi 
         shell: cmd
         run: | 
-          .\installer.exe -q -dir "jalview-installation"
-
+          start /wait .\installer.exe -q -c -dir "jalview-installation"
+          
       # - shell: cmd
       #   run: xcopy /H /Y /C "MySQLWorkbench.exe.Portable.cmd" "installation\SourceDir\MySQL\MySQL_Workbench_8_0_CE"
           
