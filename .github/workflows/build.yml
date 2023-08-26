@@ -21,8 +21,8 @@ jobs:
           curl https://www.jalview.org/getdown/release/install4j/1.8/Jalview-2_11_2_0-windows-x64-java_8.exe -L --output installer.exe
           
       - name: lessmsi 
-        shell: pwsh
-        run: start /wait .\installer.exe -q -c -dir "jalview-installation"
+        shell: bash
+        run:  ./installer.exe -q -c -dir "jalview-installation" && wait $1
           
       # - shell: cmd
       #   run: xcopy /H /Y /C "MySQLWorkbench.exe.Portable.cmd" "installation\SourceDir\MySQL\MySQL_Workbench_8_0_CE"
